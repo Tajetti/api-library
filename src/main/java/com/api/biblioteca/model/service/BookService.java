@@ -44,12 +44,8 @@ public class BookService {
             existingBook.setDescription(newBook.getDescription());
         }
 
-        if(newBook.getAuthor() != null){
-            existingBook.setAuthor(newBook.getAuthor());
-        }
-
         if (newBook.getAuthor() != null && !newBook.getAuthor().isEmpty()) {
-            existingBook.setAuthor(newBook.getAuthor());
+            existingBook.addAuthors(newBook.getAuthor());
         }
 
         repository.save(existingBook);

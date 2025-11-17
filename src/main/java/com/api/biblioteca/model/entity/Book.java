@@ -12,7 +12,7 @@ public class Book {
     private long id;
     private String title;
     private String description;
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "author_name",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -55,6 +55,10 @@ public class Book {
 
     public void setAuthor(List<Author> author) {
         this.author = author;
+    }
+
+    public void addAuthors(List<Author> author){
+        this.author.addAll(author);
     }
 
     @Override
