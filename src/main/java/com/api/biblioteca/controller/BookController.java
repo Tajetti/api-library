@@ -3,8 +3,10 @@ package com.api.biblioteca.controller;
 import com.api.biblioteca.model.entity.Book;
 import com.api.biblioteca.model.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    public BookController(BookService service) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
@@ -27,15 +29,34 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.Books();
-        return ResponseEntity.ok(books);
+        try{
+            List<Book> books = bookService.Books();
+            return ResponseEntity.ok(books);
+        } catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("title/{title}")
+    public Book getBookById(@PathVariable("title") String title) {
+        try{
+            Book FoundedBook = bookService.BooksByTitle(title);
+            return FoundedBook;
+        } catch (Exception e){
+            throw  new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBook(@PathVariable("id") Long id,
                                             @RequestBody Book book) throws  Exception {
-        Book existingBook = bookService.updateBook(id, book);
-        return  ResponseEntity.ok(existingBook);
+        try{
+            Book existingBook = bookService.updateBook(id, book);
+            return  ResponseEntity.ok(existingBook);
+        } catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/delete/{id}")

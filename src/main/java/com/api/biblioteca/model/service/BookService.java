@@ -25,6 +25,10 @@ public class BookService {
         return (List<Book>) books;
     }
 
+    public Book BooksByTitle(String title) {
+        return repository.findBooksByTitle(title);
+    }
+
     public Book updateBook(Long id, Book newBook){
         Book existingBook = repository.findBookById(id);
 
