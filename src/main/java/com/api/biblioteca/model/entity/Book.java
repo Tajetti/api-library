@@ -14,7 +14,7 @@ public class Book {
     private String description;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "author_name",
+            name = "author_book",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
