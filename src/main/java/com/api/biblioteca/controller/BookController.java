@@ -50,7 +50,7 @@ public class BookController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBook(@PathVariable("id") Long id,
-                                            @RequestBody Book book) throws  Exception {
+                                            @RequestBody Book book){
         try{
             Book existingBook = bookService.updateBook(id, book);
             return  ResponseEntity.ok(existingBook);

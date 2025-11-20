@@ -5,6 +5,7 @@ import com.api.biblioteca.model.entity.Client;
 import com.api.biblioteca.model.repository.ClientRepository;
 import com.api.biblioteca.model.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,13 +34,13 @@ public class ClientController {
         return ResponseEntity.ok().body(clientService.findAllClients());
     }
 
-    @GetMapping("/email")
-    public ResponseEntity<Client> getClientByEmail(@RequestParam String email){
+    @GetMapping("/email/{email}")
+    public Client getClientByEmail(@RequestParam String email) throws Exception{
         Client client = clientService.findClientByEmail(email);
         if (client == null) {
-            return ResponseEntity.notFound().build();
+            throw new Exception("there is nothing we can do");
         }
-        return ResponseEntity.ok(client);
+        return client;
     }
 
 
