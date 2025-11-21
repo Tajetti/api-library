@@ -6,8 +6,10 @@ import com.api.biblioteca.model.repository.ClientRepository;
 import com.api.biblioteca.model.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,13 +36,12 @@ public class ClientController {
         return ResponseEntity.ok().body(clientService.findAllClients());
     }
 
-    @GetMapping("/email/{email}")
-    public Client getClientByEmail(@RequestParam String email) throws Exception{
-        Client client = clientService.findClientByEmail(email);
-        if (client == null) {
-            throw new Exception("there is nothing we can do");
-        }
-        return client;
+    @GetMapping("/email")
+    public Client getClientByEmail(@RequestParam String email) {
+        return clientService.findClientByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Cliente não encontrado com esse email."
+                ));
     }
 
 

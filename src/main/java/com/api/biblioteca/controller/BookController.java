@@ -45,7 +45,6 @@ public class BookController {
         } catch (Exception e){
             throw  new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-
     }
 
     @PutMapping("/update/{id}")

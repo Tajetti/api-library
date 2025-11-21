@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -30,13 +31,14 @@ public class ClientService {
     }
 
     public List<Client> findAllClients() {
-        Iterable<Client> clients = repository.findAll();
-        return (List<Client>) clients;
+        Iterable<Client> client = repository.findAll();
+        return (List<Client>) client;
     }
 
-    public Client findClientByEmail(String email) {
-        return repository.findClientByEmailIgnoreCase(email);
+    public Optional<Client> findClientByEmail(String email) {
+        return Optional.ofNullable(repository.findClientByEmailIgnoreCase(email));
     }
+
 
     public Client updateClient(Long id, Client newClient) {
         Client existingClient = repository.findClientById(id);
