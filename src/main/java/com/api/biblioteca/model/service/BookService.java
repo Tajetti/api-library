@@ -15,9 +15,13 @@ public class BookService {
     @Autowired
     private BookRepository repository;
 
-    public String createBook(Book book) {
+    public String createBook(Book book) throws ResponseStatusException{
+        if(book.getTitle().isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Title is empty");
+        }
+
         repository.save(book);
-        return "Book created successfully!";
+        return "Book created!";
     }
 
     public List<Book> Books() {
@@ -29,11 +33,11 @@ public class BookService {
         return repository.findBooksByTitle(title);
     }
 
-    public Book updateBook(Long id, Book newBook){
+    public Book updateBook(Long id, Book newBook) throws ResponseStatusException{
         Book existingBook = repository.findBookById(id);
 
-        if(existingBook == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found");
+        if(newBook.getTitle().isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Title is empty");
         }
 
         if(newBook.getTitle() != null){
@@ -61,3 +65,7 @@ public class BookService {
         }
     }
 }
+
+//SELECT *
+//FROM book
+//JOIN author ON book.id = author.id;
