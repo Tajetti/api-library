@@ -24,7 +24,7 @@ public class BookService {
         return "Book created!";
     }
 
-    public List<Book> Books() {
+    public List<Book> books() {
         Iterable<Book> books = repository.findAll();
         return (List<Book>) books;
     }

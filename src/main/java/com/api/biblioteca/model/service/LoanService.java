@@ -27,9 +27,6 @@ public class LoanService {
     @Autowired
     private ClientRepository clientRepository;
 
-    // =====================
-    // Criar empréstimo
-    // =====================
     public String createLoan(int clientId, int bookId) {
 
         Client client = clientRepository.findClientById((long) clientId);
@@ -54,51 +51,35 @@ public class LoanService {
         return "Loan created successfully!";
     }
 
-
-    // =====================
-    // Listar empréstimos
-    // =====================
     public List<Loan> findAllLoans() {
         return (List<Loan>) loanRepository.findAll();
     }
 
-
-    // =====================
-    // Buscar empréstimo por ID
-    // =====================
     public Loan findLoanById(int id) {
         return loanRepository.findById(id)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan not found"));
     }
 
-
-    // =====================
-    // Atualizar empréstimo
-    // =====================
     public Loan updateLoan(int id, Loan newLoanData) {
 
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, "Loan not found"));
 
-        // Atualizar data de devolução
         if (newLoanData.getReturnDate() != null) {
             loan.setReturnDate(LocalDate.now());
 
-            // calcular multa se atrasado
             if (loan.getReturnDate().isAfter(loan.getDueDate())) {
                 long diff = loan.getReturnDate().toEpochDay() - loan.getDueDate().toEpochDay();
-                loan.setFine(diff * 2.0); // multa de 2,00 por dia
+                loan.setFine(diff * 2.0);
             }
         }
 
-        // Atualizar data de vencimento (caso queria renovar)
         if (newLoanData.getDueDate() != null) {
             loan.setDueDate(newLoanData.getDueDate());
         }
 
-        // Atualizar multa manualmente
         if (newLoanData.getFine() != null) {
             loan.setFine(newLoanData.getFine());
         }
@@ -107,10 +88,6 @@ public class LoanService {
         return loan;
     }
 
-
-    // =====================
-    // Deletar empréstimo
-    // =====================
     public String deleteLoan(int id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() ->

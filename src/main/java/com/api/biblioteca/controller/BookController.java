@@ -30,7 +30,7 @@ public class BookController {
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
         try{
-            List<Book> books = bookService.Books();
+            List<Book> books = bookService.books();
             return ResponseEntity.ok(books);
         } catch (Exception e){
             return ResponseEntity.notFound().build();
