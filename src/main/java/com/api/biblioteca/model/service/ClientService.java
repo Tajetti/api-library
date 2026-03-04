@@ -1,65 +1,42 @@
 package com.api.biblioteca.model.service;
 
-import com.api.biblioteca.model.entity.Client;
-import com.api.biblioteca.model.repository.ClientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import com.api.biblioteca.model.dto.ClientRequestDTO;
+import com.api.biblioteca.model.entity.ClientEntity;
+import com.api.biblioteca.model.repository.ClientRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ClientService {
 
-    @Autowired
-    private ClientRepository repository;
+    private final ClientRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ClientService(ClientRepository repository) {
+    public ClientService(ClientRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public String createClient(Client client) {
-        repository.save(client);
-        return "Client created successfully";
-    }
+    @Transactional
+    public ClientEntity create(ClientRequestDTO dto) {
+        String email = dto.getEmail() == null ? null : dto.getEmail().trim().toLowerCase();
+        String name  = dto.getName()  == null ? null : dto.getName().trim();
+        String phone = dto.getPhone() == null ? null : dto.getPhone().trim();
 
-    public List<Client> findAllClients() {
-        Iterable<Client> client = repository.findAll();
-        return (List<Client>) client;
-    }
-
-    public Optional<Client> findClientByEmail(String email) {
-        return Optional.ofNullable(repository.findClientByEmailIgnoreCase(email));
-    }
-
-
-    public Client updateClient(Long id, Client newClient) {
-        Client existingClient = repository.findClientById(id);
-
-        if(existingClient == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client not found");
+        if (repository.existsByEmailIgnoreCase(email)) { 
+            throw new IllegalArgumentException("email já cadastrado");
         }
 
-        if(newClient.getEmail() != null){
-            existingClient.setEmail(newClient.getEmail());
-        }
+        ClientEntity client = new ClientEntity();
+        client.setName(name);
+        client.setPhone(phone);
+        client.setEmail(email);
+        client.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        repository.save(existingClient);
-        return existingClient;
+        return repository.save(client);
     }
 
-    public boolean deleteClient(Long id) {
-        Client existingClient = repository.findClientById(id);
-        if(existingClient != null){
-            repository.delete(existingClient);
-        }
-        return true;
-    }
 }
