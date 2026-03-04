@@ -1,68 +1,44 @@
 package com.api.biblioteca.controller;
 
-import com.api.biblioteca.model.entity.Book;
-import com.api.biblioteca.model.entity.Client;
-import com.api.biblioteca.model.repository.ClientRepository;
-import com.api.biblioteca.model.service.ClientService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.api.biblioteca.model.dto.ClientRequestDTO;
+import com.api.biblioteca.model.dto.ClientResponseDTO;
+import com.api.biblioteca.model.entity.ClientEntity;
+import com.api.biblioteca.model.service.ClientService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/client")
 public class ClientController {
 
-    @Autowired
-    private ClientService clientService;
+    private final ClientService service;
 
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
+    public ClientController(ClientService service) {
+        this.service = service;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createClient(@RequestBody Client client){
-        clientService.createClient(client);
-        return ResponseEntity.ok().build();
-    }
+    @PostMapping
+    public ResponseEntity<?> createClient(@Valid @RequestBody ClientRequestDTO dto){
+        try {
+            ClientEntity saved = service.create(dto);
 
-    @GetMapping
-    public ResponseEntity<List<Client>> getAllClients(){
-        clientService.findAllClients();
-        return ResponseEntity.ok().body(clientService.findAllClients());
-    }
+            ClientResponseDTO res = new ClientResponseDTO();
+            res.setId(saved.getId());
+            res.setName(saved.getName());
+            res.setPhone(saved.getPhone());
+            res.setEmail(saved.getEmail());
 
-    @GetMapping("/email")
-    public Client getClientByEmail(@RequestParam String email) {
-        return clientService.findClientByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Cliente não encontrado com esse email."
-                ));
-    }
-
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateClient(@PathVariable("id") Long id,
-                                        @RequestBody Client client) throws  Exception {
-        try{
-            Client existingClient = clientService.updateClient(id, client);
-            return  ResponseEntity.ok(existingClient);
-        } catch (Exception e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(201).body(res);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error creating client");
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteClient(@PathVariable("id") Long id) {
-        try{
-            clientService.deleteClient(id);
-            return ResponseEntity.ok(true);
-        } catch (Exception e){
-            return  ResponseEntity.status(400).body("Error deleting book!" + e.getMessage());
-        }
-    }
 }
