@@ -1,4 +1,4 @@
-package com.api.biblioteca.model.dto;
+package com.api.biblioteca.client.model.dto;
 
 import java.util.UUID;
 

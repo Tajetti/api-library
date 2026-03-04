@@ -1,4 +1,4 @@
-package com.api.biblioteca.model.repository;
+package com.api.biblioteca.client.model.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.api.biblioteca.model.entity.ClientEntity;
+import com.api.biblioteca.client.model.entity.ClientEntity;
 
 @Repository
 public interface ClientRepository extends CrudRepository<ClientEntity, UUID> {

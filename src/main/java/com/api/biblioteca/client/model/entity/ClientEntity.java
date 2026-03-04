@@ -1,4 +1,4 @@
-package com.api.biblioteca.model.entity;
+package com.api.biblioteca.client.model.entity;
 
 import java.util.UUID;
 

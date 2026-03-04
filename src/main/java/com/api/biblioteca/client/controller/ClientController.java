@@ -1,4 +1,4 @@
-package com.api.biblioteca.controller;
+package com.api.biblioteca.client.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.biblioteca.model.dto.ClientRequestDTO;
-import com.api.biblioteca.model.dto.ClientResponseDTO;
-import com.api.biblioteca.model.entity.ClientEntity;
-import com.api.biblioteca.model.service.ClientService;
+import com.api.biblioteca.client.model.dto.ClientRequestDTO;
+import com.api.biblioteca.client.model.dto.ClientResponseDTO;
+import com.api.biblioteca.client.model.entity.ClientEntity;
+import com.api.biblioteca.client.model.service.ClientService;
 
 import jakarta.validation.Valid;
 

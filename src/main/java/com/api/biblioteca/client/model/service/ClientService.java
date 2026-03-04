@@ -1,13 +1,12 @@
-package com.api.biblioteca.model.service;
+package com.api.biblioteca.client.model.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.api.biblioteca.model.dto.ClientRequestDTO;
-import com.api.biblioteca.model.entity.ClientEntity;
-import com.api.biblioteca.model.repository.ClientRepository;
-
-import jakarta.transaction.Transactional;
+import com.api.biblioteca.client.model.dto.ClientRequestDTO;
+import com.api.biblioteca.client.model.entity.ClientEntity;
+import com.api.biblioteca.client.model.repository.ClientRepository;
 
 @Service
 public class ClientService {
