@@ -10,4 +10,5 @@ import com.api.biblioteca.book.entity.BookEntity;
 public interface BookRepository extends JpaRepository<BookEntity, UUID> {
     List<BookEntity> findByAvailable(Boolean available);
     List<BookEntity> findByTitleContainingIgnoreCase(String title);
+    List<BookEntity> findByTitleContainingIgnoreCaseAndAvailable(String title, Boolean available);
 }

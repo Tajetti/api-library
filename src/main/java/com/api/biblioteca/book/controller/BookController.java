@@ -1,11 +1,9 @@
 package com.api.biblioteca.book.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,18 +37,7 @@ public class BookController {
         return books;
     }
 
-    @GetMapping("/{id}")
-    public BookResponseDTO getById(@PathVariable UUID id) {
-        BookResponseDTO book = service.findById(id);
-        
-        if(book == null) {
-            throw new RuntimeException("Livro não encontrado");
-        }
-        
-        return book;
-    }
-
-    @GetMapping("/search")
+    @GetMapping("/title")
     public List<BookResponseDTO> getByTitle(@RequestParam(required=false) String title) {
         if(title == null || title.isBlank()) {
             List<BookResponseDTO> books = service.findAll();
@@ -66,5 +53,28 @@ public class BookController {
         return books;
     }
     
+    @GetMapping("/available")
+    public List<BookResponseDTO> getByAvailable(@RequestParam(required=false) Boolean available) {
+        if(available == null) {
+            return service.findAll();
+        }
+        return service.findByAvailable(available);
+    } 
+
+    @GetMapping("/search")
+    public List<BookResponseDTO> searchTitleAvailable(@RequestParam(required=false) String title, @RequestParam(required=false) Boolean available) {
+        
+            if(title != null && !title.isBlank() && available != null) {
+                List<BookResponseDTO> books = service.findByTitleContainingIgnoreCaseAndAvailable(title.trim(), available);
+                
+                if(books.isEmpty()) {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nenhum livro encontrado com o título: " + title + " e disponibilidade: " + available);
+                }
+                
+                return books;
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Parâmetros 'title' e 'available' são obrigatórios para esta busca");
+            }
+        }
     
 }
