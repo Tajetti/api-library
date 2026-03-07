@@ -1,6 +1,7 @@
 package com.api.biblioteca.client.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,8 +47,20 @@ public class ClientController {
     }
 
     @GetMapping
-    public List<ClientEntity> AllClients() {
-        return service.findAll();
+    public List<ClientResponseDTO> AllClients() {
+        return service.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    private ClientResponseDTO toResponse(ClientEntity client) {
+        ClientResponseDTO response = new ClientResponseDTO();
+        response.setId(client.getId());
+        response.setName(client.getName());
+        response.setEmail(client.getEmail());
+        response.setPhone(client.getPhone());
+        return response;
     }
     
 
