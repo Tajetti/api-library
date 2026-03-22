@@ -1,14 +1,15 @@
 package com.api.biblioteca.client.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.api.biblioteca.client.model.dto.ClientRequestDTO;
 import com.api.biblioteca.client.model.dto.ClientResponseDTO;
@@ -16,7 +17,6 @@ import com.api.biblioteca.client.model.entity.ClientEntity;
 import com.api.biblioteca.client.model.service.ClientService;
 
 import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/client")
@@ -29,29 +29,21 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createClient(@Valid @RequestBody ClientRequestDTO dto){
+    public ResponseEntity<ClientResponseDTO> createClient(@Valid @RequestBody ClientRequestDTO dto) {
         try {
             ClientEntity saved = service.create(dto);
-
-            ClientResponseDTO res = new ClientResponseDTO();
-            res.setId(saved.getId());
-            res.setName(saved.getName());
-            res.setPhone(saved.getPhone());
-            res.setEmail(saved.getEmail());
-
-            return ResponseEntity.status(201).body(res);
-            
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error creating client");
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage(), exception);
         }
     }
 
     @GetMapping
-    public List<ClientResponseDTO> AllClients() {
+    public List<ClientResponseDTO> getAllClients() {
         return service.findAll()
                 .stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private ClientResponseDTO toResponse(ClientEntity client) {
@@ -62,6 +54,4 @@ public class ClientController {
         response.setPhone(client.getPhone());
         return response;
     }
-    
-
 }

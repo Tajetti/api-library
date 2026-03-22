@@ -33,7 +33,7 @@ public class LoanController {
         return service.findById(id);
     }
 
-    @PostMapping("/{id}/return")
+    @PostMapping("/return/{id}")
     public LoanResponseDTO returnLoan(@PathVariable UUID id) {
         return service.returnLoan(id);
     }   

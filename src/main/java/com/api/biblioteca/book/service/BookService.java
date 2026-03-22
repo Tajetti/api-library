@@ -8,6 +8,7 @@ import com.api.biblioteca.book.dto.BookRequestDTO;
 import com.api.biblioteca.book.dto.BookResponseDTO;
 import com.api.biblioteca.book.entity.BookEntity;
 import com.api.biblioteca.book.repository.BookRepository;
+import com.api.biblioteca.exception.ExceptionTitleExists;
 
 
 @Service
@@ -21,7 +22,7 @@ public class BookService {
 
     public BookResponseDTO create(BookRequestDTO bookRequestDTO) {
         if(repository.existsByTitle(bookRequestDTO.getTitle())) {
-            throw new RuntimeException("Já existe um livro com o título: " + bookRequestDTO.getTitle());
+            throw new ExceptionTitleExists();
         }
 
         BookEntity entity = new BookEntity();

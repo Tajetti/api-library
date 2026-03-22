@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.api.biblioteca.client.model.dto.ClientRequestDTO;
 import com.api.biblioteca.client.model.entity.ClientEntity;
@@ -21,7 +20,6 @@ public class ClientService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
     public ClientEntity create(ClientRequestDTO dto) {
         String email = dto.getEmail() == null ? null : dto.getEmail().trim().toLowerCase();
         String name  = dto.getName()  == null ? null : dto.getName().trim();
@@ -43,5 +41,4 @@ public class ClientService {
     public List<ClientEntity> findAll() {
         return repository.findAll();
     }
-
 }
