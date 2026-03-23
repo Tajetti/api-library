@@ -3,14 +3,25 @@ package com.api.biblioteca.exception;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<?> handleNoResourceFound(NoResourceFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(Map.of(
+                "error", "Rota não encontrada",
+                "details", "Verifique a URL. Exemplo: /book/title"
+        ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
     
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> handleResponseStatus(ResponseStatusException ex) {
@@ -25,6 +36,12 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toMap(err -> err.getField(), err -> err.getDefaultMessage()));
 
         return ResponseEntity.badRequest().body(new ErrorResponse(msg));
+    }
+
+    @ExceptionHandler(ExceptionTitleExists.class)
+    public ResponseEntity<?> handleTitleExists(ExceptionTitleExists ex) {
+        ErrorResponse errorResponse = new ErrorResponse(Map.of("error", ex.getMessage()));
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     public record ErrorResponse(Map<String, String> error) {}

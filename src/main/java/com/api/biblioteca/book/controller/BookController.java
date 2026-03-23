@@ -3,22 +3,18 @@ package com.api.biblioteca.book.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.api.biblioteca.book.dto.BookRequestDTO;
 import com.api.biblioteca.book.dto.BookResponseDTO;
 import com.api.biblioteca.book.service.BookService;
-
-import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import com.api.biblioteca.book.dto.BookRequestDTO;
-
 
 @RestController
 @RequestMapping("/book")
@@ -30,11 +26,18 @@ public class BookController {
     }
 
     @PostMapping("/create")
-    public BookResponseDTO post(@Valid @RequestBody BookRequestDTO bookRequestDTO) {
-        BookResponseDTO createdBook = service.create(bookRequestDTO);
-        return createdBook;
+    public ResponseEntity<BookResponseDTO> create(@RequestBody BookRequestDTO request) {
+        if (request == null
+                || request.getTitle() == null || request.getTitle().isBlank()
+                || request.getAuthor() == null || request.getAuthor().isBlank()
+                || request.getYear() == null
+                || request.getAvailable() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Campos obrigatórios: title, author, year, available");
+        }
+
+        BookResponseDTO created = service.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-    
 
     @GetMapping
     public List<BookResponseDTO> getAll() {
